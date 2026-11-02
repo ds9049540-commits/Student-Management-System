@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,116 +7,115 @@
 </head>
 <body>
 
-    <h1>Student Management System</h1>
-    <p>Open the browser Console to see the report.</p>
+<script>
 
-    <script>
+// 1. Student Class
+class Student {
+    constructor(id, name, grades, attendance) {
+        this.id = id;
+        this.name = name;
+        this.grades = grades;
+        this.attendance = attendance;
+    }
 
-        // 1. Student Class
-        class Student {
-            constructor(id, name, grades, attendance) {
-                this.id = id;
-                this.name = name;
-                this.grades = grades;
-                this.attendance = attendance;
-            }
-
-            // 2. Calculate Average using reduce
-            calculateAverage() {
-                let total = this.grades.reduce(
-                    (sum, grade) => sum + grade, 0
-                );
-
-                return total / this.grades.length;
-            }
-
-            // 3. Calculate Grade
-            getGrade() {
-                let average = this.calculateAverage();
-
-                if (average >= 90) {
-                    return "A";
-                } else if (average >= 80) {
-                    return "B";
-                } else if (average >= 70) {
-                    return "C";
-                } else if (average >= 60) {
-                    return "D";
-                } else if (average >= 50) {
-                    return "E";
-                } else {
-                    return "F";
-                }
-            }
-
-            // 4. Final Result
-            getResult() {
-                let average = this.calculateAverage();
-
-                if (average >= 50 && this.attendance >= 75) {
-                    return "ناجح";
-                } else {
-                    return "يحتاج مراجعة";
-                }
-            }
-        }
-
-        // 5. Students Array
-        let studentsList = [
-            new Student(1, "Ahmed", [90, 85, 95], 90),
-            new Student(2, "Mona", [45, 48, 42], 80),
-            new Student(3, "Ali", [70, 75, 80], 85),
-            new Student(4, "Sara", [40, 45, 48], 70)
-        ];
-
-        // 6. Students Report
-        console.log("===== Students Report =====");
-
-        studentsList.forEach(student => {
-            console.log({
-                Name: student.name,
-                Average: student.calculateAverage(),
-                Grade: student.getGrade(),
-                Result: student.getResult()
-            });
-        });
-
-        // 7. Mercy Committee using filter
-        let strugglingStudents = studentsList.filter(student => {
-            let average = student.calculateAverage();
-            return average >= 40 && average <= 49;
-        });
-
-        // 8. Add 5 Mercy Marks using map
-        let mercyStudents = strugglingStudents.map(student => {
-            let newAverage = student.calculateAverage() + 5;
-
-            return {
-                id: student.id,
-                name: student.name,
-                oldAverage: student.calculateAverage(),
-                newAverage: newAverage
-            };
-        });
-
-        // 9. Sum New Averages using reduce
-        let totalNewAverages = mercyStudents.reduce(
-            (sum, student) => sum + student.newAverage, 0
+    // 2. Calculate Average using reduce
+    calculateAverage() {
+        let total = this.grades.reduce(
+            (sum, grade) => sum + grade, 0
         );
+        return total / this.grades.length;
+    }
 
-        // 10. Protect against division by zero
-        let mercyAverage = mercyStudents.length > 0
-            ? totalNewAverages / mercyStudents.length
-            : 0;
+    // 3. Calculate Grade
+    calculateGrade() {
+        let average = this.calculateAverage();
 
-        // 11. Final Output
-        console.log("===== Mercy Committee Students =====");
-        console.log(mercyStudents);
+        if (average >= 90) {
+            return "A";
+        } else if (average >= 80) {
+            return "B";
+        } else if (average >= 70) {
+            return "C";
+        } else if (average >= 60) {
+            return "D";
+        } else if (average >= 50) {
+            return "E";
+        } else {
+            return "F";
+        }
+    }
 
-        console.log("===== Mercy Average =====");
-        console.log(mercyAverage);
+    // 4. Final Result
+    getFinalResult() {
+        let average = this.calculateAverage();
 
-    </script>
+        if (average >= 50 && this.attendance >= 75) {
+            return "ناجح";
+        } else {
+            return "يحتاج مراجعة";
+        }
+    }
+}
+
+// 5. Students Array
+let studentsList = [
+    new Student(101, "Ahmed", [90, 85, 95], 90),
+    new Student(102, "Sara", [45, 48, 42], 80),
+    new Student(103, "Mona", [70, 75, 80], 85),
+    new Student(104, "Ali", [40, 45, 48], 70)
+];
+
+// 6. Print All Students Reports
+console.log("===== All Students Reports =====");
+
+studentsList.forEach(student => {
+    console.log({
+        Name: student.name,
+        Average: student.calculateAverage(),
+        Grade: student.calculateGrade(),
+        Result: student.getFinalResult()
+    });
+});
+
+// 7. Filter Students Needing Mercy Committee
+let mercyStudents = studentsList.filter(student => {
+    let average = student.calculateAverage();
+
+    return average >= 40 && average <= 49;
+});
+
+// 8. Add 5 Mercy Marks using map
+let updatedMercyStudents = mercyStudents.map(student => {
+    let oldAverage = student.calculateAverage();
+    let newAverage = oldAverage + 5;
+
+    return {
+        id: student.id,
+        name: student.name,
+        oldAverage: oldAverage,
+        newAverage: newAverage
+    };
+});
+
+// 9. Sum New Averages using reduce
+let totalNewAverages = updatedMercyStudents.reduce(
+    (sum, student) => sum + student.newAverage, 0
+);
+
+// 10. Calculate Mercy Average
+// Protect against division by zero
+let mercyAverage = updatedMercyStudents.length > 0
+    ? totalNewAverages / updatedMercyStudents.length
+    : 0;
+
+// 11. Final Output
+console.log("===== Mercy Committee Students =====");
+console.table(updatedMercyStudents);
+
+console.log("===== Mercy Average =====");
+console.log(mercyAverage);
+
+</script>
 
 </body>
 </html>
